@@ -156,14 +156,3 @@ window.EXPERIMENTS = (function(){
   return { exp1: AcidBase, exp2: Solubility, exp3: AcidMetal };
 })();
 
-/* Hook into the same routing system as games */
-(function(){
-  var origInit;
-  /* Wait for app.js to set up window.APP, then add experiment screens to its routing */
-  window.addEventListener("DOMContentLoaded", function(){
-    /* Initialize each experiment's bindings */
-    Object.keys(window.EXPERIMENTS).forEach(function(k){
-      if(window.EXPERIMENTS[k].init) window.EXPERIMENTS[k].init();
-    });
-  });
-})();

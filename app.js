@@ -128,6 +128,9 @@
     if(window.GAMES) Object.keys(window.GAMES).forEach(function(k){
       if(window.GAMES[k].init) window.GAMES[k].init();
     });
+    if(window.EXPERIMENTS) Object.keys(window.EXPERIMENTS).forEach(function(k){
+      if(window.EXPERIMENTS[k].init) window.EXPERIMENTS[k].init();
+    });
   }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", init);
   else init();
