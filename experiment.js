@@ -1,45 +1,46 @@
-/* experiments.js — 3 interactive demos: Acid-Base, Solubility, Acid+Metal. */
+/* experiments.js — 3 interactive demos: Acid-Base, Solubility, Acid+Metal.
+   Self-healing: start() calls init() once on first invocation. */
 window.EXPERIMENTS = (function(){
-  var $=window.APP.$, $$=window.APP.$$;
+  var $ = (window.APP && window.APP.$)  || function(s){ return document.querySelector(s); };
+  var $$ = (window.APP && window.APP.$$) || function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
 
   /* =========== EXP 1: NaOH + phenolphthalein + HCl =========== */
   var AcidBase = (function(){
-    var hasIndicator=false, hclDrops=0, totalMaxDrops=10;
-    /* Initial: NaOH 0.1 M (10 mL) — pH ~13, clear.
-       Add phenolphthalein → pink (pH > 8.3).
-       Each HCl drop neutralizes some NaOH; after all drops, pH ~7-3, color back to clear. */
+    var hasIndicator=false, hclDrops=0, totalMaxDrops=10, initialized=false;
     function reset(){
       hasIndicator=false; hclDrops=0;
-      $("#exp1-tube").classList.remove("pink");
-      $("#exp1-tube").classList.remove("clear");
-      $("#exp1-add-ind").disabled = false;
-      $("#exp1-add-hcl").disabled = true;
-      $("#exp1-msg").innerHTML = "Bắt đầu: ống nghiệm chứa <strong>10 mL dung dịch NaOH 0,1M</strong>.";
+      var tube=$("#exp1-tube");
+      if(tube){ tube.classList.remove("pink"); tube.classList.remove("clear"); }
+      var ai=$("#exp1-add-ind");  if(ai) ai.disabled = false;
+      var ah=$("#exp1-add-hcl");  if(ah) ah.disabled = true;
+      var msg=$("#exp1-msg");     if(msg) msg.innerHTML = "Bắt đầu: ống nghiệm chứa <strong>10 mL dung dịch NaOH 0,1M</strong>. Bấm <em>Thêm phenolphtalein</em> để bắt đầu.";
       updatePH();
     }
     function addIndicator(){
       hasIndicator=true;
-      $("#exp1-tube").classList.add("pink");
-      $("#exp1-add-ind").disabled = true;
-      $("#exp1-add-hcl").disabled = false;
-      $("#exp1-msg").innerHTML = "Thêm vài giọt <strong>phenolphtalein</strong> → dung dịch chuyển <span style=\"color:#d83a7c;font-weight:600\">màu hồng</span> (môi trường base).";
+      var t=$("#exp1-tube"); if(t) t.classList.add("pink");
+      var ai=$("#exp1-add-ind"); if(ai) ai.disabled = true;
+      var ah=$("#exp1-add-hcl"); if(ah) ah.disabled = false;
+      var msg=$("#exp1-msg"); if(msg) msg.innerHTML = "Thêm phenolphtalein → dung dịch chuyển <span style=\"color:#d83a7c;font-weight:600\">màu hồng</span> (môi trường base, pH > 8,3).";
       updatePH();
     }
     function addHcl(){
       hclDrops++;
+      var t=$("#exp1-tube"), msg=$("#exp1-msg"), ah=$("#exp1-add-hcl");
       if(hclDrops>=totalMaxDrops){
-        $("#exp1-tube").classList.remove("pink");
-        $("#exp1-tube").classList.add("clear");
-        $("#exp1-add-hcl").disabled = true;
-        $("#exp1-msg").innerHTML = "Đã thêm đủ HCl: dung dịch trở lại <strong>không màu</strong>. Phương trình: <em>NaOH + HCl → NaCl + H₂O</em>.";
+        if(t){ t.classList.remove("pink"); t.classList.add("clear"); }
+        if(ah) ah.disabled = true;
+        if(msg) msg.innerHTML = "Đã thêm đủ HCl: dung dịch trở lại <strong>không màu</strong>. Phương trình trung hòa: <em>NaOH + HCl → NaCl + H₂O</em>.";
       } else {
-        $("#exp1-msg").innerHTML = "Thêm giọt HCl thứ <strong>"+hclDrops+"</strong>. Phản ứng đang trung hòa từ từ…";
+        if(msg) msg.innerHTML = "Thêm giọt HCl thứ <strong>"+hclDrops+"</strong>/"+totalMaxDrops+". Phản ứng đang trung hòa từ từ…";
       }
-      /* Animate a drop */
-      var drop = document.createElement("div");
-      drop.className = "exp1-drop";
-      $("#exp1-stage").appendChild(drop);
-      setTimeout(function(){ drop.remove(); }, 800);
+      var stage = $("#exp1-stage");
+      if(stage){
+        var drop = document.createElement("div");
+        drop.className = "exp1-drop";
+        stage.appendChild(drop);
+        setTimeout(function(){ drop.remove(); }, 800);
+      }
       updatePH();
     }
     function updatePH(){
@@ -48,34 +49,38 @@ window.EXPERIMENTS = (function(){
       else if(hclDrops < totalMaxDrops/2) ph = 13 - hclDrops*0.7;
       else ph = Math.max(2, 9.5 - (hclDrops - totalMaxDrops/2)*1.2);
       ph = Math.round(ph*10)/10;
-      $("#exp1-ph-val").textContent = ph.toFixed(1);
-      var pct = (ph-1)/13 * 100;
-      $("#exp1-ph-mark").style.left = Math.max(0, Math.min(100, pct)) + "%";
+      var v=$("#exp1-ph-val"), m=$("#exp1-ph-mark");
+      if(v) v.textContent = ph.toFixed(1);
+      if(m){ var pct = (ph-1)/13 * 100; m.style.left = Math.max(0, Math.min(100, pct)) + "%"; }
     }
     function init(){
-      $("#exp1-add-ind").addEventListener("click", addIndicator);
-      $("#exp1-add-hcl").addEventListener("click", addHcl);
-      $("#exp1-reset").addEventListener("click", reset);
+      if(initialized) return;
+      var ai=$("#exp1-add-ind"), ah=$("#exp1-add-hcl"), rs=$("#exp1-reset");
+      if(ai) ai.addEventListener("click", addIndicator);
+      if(ah) ah.addEventListener("click", addHcl);
+      if(rs) rs.addEventListener("click", reset);
+      initialized = true;
     }
-    return {init:init, start:reset};
+    function start(){ init(); reset(); }
+    return {init:init, start:start};
   })();
 
-  /* =========== EXP 2: Solubility — drop salts into water =========== */
+  /* =========== EXP 2: Solubility =========== */
   var Solubility = (function(){
     var SALTS = [
       {f:"NaCl", soluble:true,  hint:"Tất cả muối Na đều tan."},
       {f:"KNO₃", soluble:true,  hint:"Tất cả muối nitrate (NO₃⁻) đều tan."},
-      {f:"BaSO₄", soluble:false, color:"#ffffff", hint:"BaSO₄ — kết tủa trắng, không tan."},
-      {f:"CaCO₃", soluble:false, color:"#f0f0f0", hint:"Đá vôi không tan trong nước thường."},
+      {f:"BaSO₄", soluble:false, color:"#ffffff", hint:"BaSO₄ — kết tủa trắng."},
+      {f:"CaCO₃", soluble:false, color:"#f0f0f0", hint:"Đá vôi — không tan."},
       {f:"AgCl",  soluble:false, color:"#ffffff", hint:"AgCl — kết tủa trắng đặc trưng."},
       {f:"CuSO₄", soluble:true,  hint:"CuSO₄ tan, dung dịch màu xanh lam."},
       {f:"PbI₂",  soluble:false, color:"#ffd54f", hint:"PbI₂ — kết tủa vàng tươi."},
       {f:"Fe(OH)₃", soluble:false, color:"#a85a2e", hint:"Fe(OH)₃ — kết tủa nâu đỏ."}
     ];
-    var idx=0;
-    function reset(){ idx=0; render(); }
+    var initialized=false;
+    function reset(){ render(); }
     function render(){
-      var grid = $("#exp2-grid");
+      var grid = $("#exp2-grid"); if(!grid) return;
       grid.innerHTML = "";
       SALTS.forEach(function(s, i){
         var btn = document.createElement("button");
@@ -84,75 +89,81 @@ window.EXPERIMENTS = (function(){
         btn.addEventListener("click", function(){ drop(i, btn); });
         grid.appendChild(btn);
       });
-      $("#exp2-msg").innerHTML = "Bấm vào một muối để thử thả vào nước.";
-      $("#exp2-water").innerHTML = '<div class="exp2-water-fill"></div>';
+      var msg=$("#exp2-msg"); if(msg) msg.innerHTML = "Bấm vào một muối để thử thả vào nước.";
+      var water=$("#exp2-water"); if(water) water.innerHTML = "";
     }
     function drop(i, btn){
       var s = SALTS[i];
       btn.disabled = true;
-      var water = $("#exp2-water");
+      var water = $("#exp2-water"); if(!water) return;
       var grain = document.createElement("div");
       grain.className = "exp2-grain";
       grain.textContent = s.f;
       water.appendChild(grain);
       setTimeout(function(){
+        var msg=$("#exp2-msg");
         if(s.soluble){
           grain.classList.add("dissolve");
-          $("#exp2-msg").innerHTML = "<strong>"+s.f+"</strong> tan tốt trong nước. "+s.hint;
+          if(msg) msg.innerHTML = "<strong>"+s.f+"</strong> tan tốt trong nước. "+s.hint;
         } else {
           grain.classList.add("precipitate");
           if(s.color) grain.style.background = s.color;
-          $("#exp2-msg").innerHTML = "<strong>"+s.f+"</strong> KHÔNG tan — tạo <strong>kết tủa</strong>. "+s.hint;
+          if(msg) msg.innerHTML = "<strong>"+s.f+"</strong> KHÔNG tan — tạo <strong>kết tủa</strong>. "+s.hint;
         }
       }, 400);
     }
     function init(){
-      $("#exp2-reset").addEventListener("click", reset);
+      if(initialized) return;
+      var rs=$("#exp2-reset");
+      if(rs) rs.addEventListener("click", reset);
+      initialized = true;
     }
-    return {init:init, start:reset};
+    function start(){ init(); reset(); }
+    return {init:init, start:start};
   })();
 
   /* =========== EXP 3: Acid + Metal (Zn + HCl) =========== */
   var AcidMetal = (function(){
-    var bubbleTimer=null, bubbleCount=0;
+    var bubbleTimer=null, bubbleCount=0, initialized=false;
     function reset(){
-      stopBubbles();
-      bubbleCount=0;
-      $("#exp3-tube").classList.remove("started");
-      $("#exp3-bubbles").innerHTML = "";
-      $("#exp3-add-zn").disabled = false;
-      $("#exp3-msg").innerHTML = "Bắt đầu: ống nghiệm chứa <strong>dung dịch HCl loãng</strong>.";
+      stopBubbles(); bubbleCount=0;
+      var t=$("#exp3-tube"); if(t) t.classList.remove("started");
+      var b=$("#exp3-bubbles"); if(b) b.innerHTML = "";
+      var az=$("#exp3-add-zn"); if(az) az.disabled = false;
+      var msg=$("#exp3-msg"); if(msg) msg.innerHTML = "Bắt đầu: ống nghiệm chứa <strong>dung dịch HCl loãng</strong>. Bấm <em>Thả viên Zn</em> để bắt đầu phản ứng.";
     }
     function addZinc(){
-      $("#exp3-tube").classList.add("started");
-      $("#exp3-add-zn").disabled = true;
-      $("#exp3-msg").innerHTML = 'Thả <strong>viên kẽm (Zn)</strong> vào HCl. Phản ứng tạo bọt khí <strong>H₂</strong> không màu, không mùi. Phương trình: <em>Zn + 2HCl → ZnCl₂ + H₂↑</em>.';
+      var t=$("#exp3-tube"); if(t) t.classList.add("started");
+      var az=$("#exp3-add-zn"); if(az) az.disabled = true;
+      var msg=$("#exp3-msg"); if(msg) msg.innerHTML = 'Thả <strong>viên kẽm (Zn)</strong> vào HCl. Phản ứng tạo bọt khí <strong>H₂</strong> không màu, không mùi. Phương trình: <em>Zn + 2HCl → ZnCl₂ + H₂↑</em>.';
       startBubbles();
     }
     function startBubbles(){
       bubbleTimer = setInterval(function(){
+        var layer = $("#exp3-bubbles"); if(!layer) return;
         var b = document.createElement("div");
         b.className = "exp3-bubble";
         b.style.left = (10 + Math.random()*80) + "%";
         b.style.width = (6 + Math.random()*10) + "px";
         b.style.height = b.style.width;
         b.style.animationDuration = (1.5 + Math.random()*1.5) + "s";
-        $("#exp3-bubbles").appendChild(b);
+        layer.appendChild(b);
         setTimeout(function(){ b.remove(); }, 3000);
         bubbleCount++;
         if(bubbleCount > 30) stopBubbles();
       }, 200);
     }
-    function stopBubbles(){
-      if(bubbleTimer){ clearInterval(bubbleTimer); bubbleTimer=null; }
-    }
+    function stopBubbles(){ if(bubbleTimer){ clearInterval(bubbleTimer); bubbleTimer=null; } }
     function init(){
-      $("#exp3-add-zn").addEventListener("click", addZinc);
-      $("#exp3-reset").addEventListener("click", reset);
+      if(initialized) return;
+      var az=$("#exp3-add-zn"), rs=$("#exp3-reset");
+      if(az) az.addEventListener("click", addZinc);
+      if(rs) rs.addEventListener("click", reset);
+      initialized = true;
     }
-    return {init:init, start:reset};
+    function start(){ init(); reset(); }
+    return {init:init, start:start};
   })();
 
   return { exp1: AcidBase, exp2: Solubility, exp3: AcidMetal };
 })();
-
