@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hóa học 8 — Trò chơi học tập | Acid · Base · Oxide · Muối</title>
+<meta name="description" content="5 trò chơi tương tác + 3 thí nghiệm minh họa giúp học sinh ôn tập Hóa học lớp 8 HK2 (acid, base, oxide, muối, pH, phương trình hóa học)." />
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%AE%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-icon">🎮⚗️</span>
+      <div>
+        <div class="brand-title">Hóa học 8 — Trò chơi học tập</div>
+        <div class="brand-sub">Acid · Base · Oxide · Muối · pH</div>
+      </div>
+    </div>
+    <span class="badge">5 trò chơi · 3 thí nghiệm</span>
+  </div>
+</header>
+
+<main class="container">
+
+<!-- ==================== HOME ==================== -->
+<section id="screen-home" class="screen active">
+  <div class="hero">
+    <h1>Học Hóa qua trò chơi</h1>
+    <p class="lead">5 trò chơi và 3 thí nghiệm tương tác giúp bạn nắm vững các khái niệm Acid, Base, Oxide, Muối, pH và phương trình hóa học. Phù hợp ôn tập Hóa lớp 8 học kỳ 2.</p>
+    <div class="hint-bar">💡 Mẹo: di chuột (hoặc chạm) lên các từ tiếng Việt để xem nghĩa tiếng Anh.</div>
+  </div>
+
+  <h2 class="section-h">5 trò chơi</h2>
+  <div class="tiles">
+    <div class="tile tile-quiz" data-target="quiz">
+      <div class="tile-icon">📝</div><div class="tile-title">Trắc nghiệm</div>
+      <div class="tile-desc">30 câu hỏi về acid, base, oxide, muối, pH và phương trình. Phản hồi tức thì.</div>
+    </div>
+    <div class="tile tile-classify" data-target="classify">
+      <div class="tile-icon">🗂️</div><div class="tile-title">Phân loại kéo–thả</div>
+      <div class="tile-desc">Kéo các chất (HCl, NaOH, CaO, NaCl…) vào đúng nhóm: Acid / Base / Oxide / Muối.</div>
+    </div>
+    <div class="tile tile-match" data-target="match">
+      <div class="tile-icon">🃏</div><div class="tile-title">Ghép cặp trí nhớ</div>
+      <div class="tile-desc">Lật thẻ để ghép công thức (H₂SO₄) với tên gọi (Acid sulfuric).</div>
+    </div>
+    <div class="tile tile-balance" data-target="balance">
+      <div class="tile-icon">⚖️</div><div class="tile-title">Cân bằng phương trình</div>
+      <div class="tile-desc">Nhập hệ số đúng để cân bằng: Al + HCl → AlCl₃ + H₂.</div>
+    </div>
+    <div class="tile tile-ph" data-target="ph">
+      <div class="tile-icon">🌡️</div><div class="tile-title">Thang pH</div>
+      <div class="tile-desc">Kéo các dung dịch (giấm, máu, NaOH…) vào đúng vị trí pH 1–14.</div>
+    </div>
+  </div>
+
+  <h2 class="section-h">3 thí nghiệm minh họa</h2>
+  <div class="tiles">
+    <div class="tile tile-exp" data-target="exp1">
+      <div class="tile-icon">🧪</div><div class="tile-title">TN 1: Acid–Base–Chỉ thị</div>
+      <div class="tile-desc">Thêm phenolphtalein vào NaOH → hồng. Thêm HCl từng giọt → mất màu (trung hòa).</div>
+    </div>
+    <div class="tile tile-exp" data-target="exp2">
+      <div class="tile-icon">💧</div><div class="tile-title">TN 2: Bảng tính tan</div>
+      <div class="tile-desc">Thả từng muối vào nước, xem muối nào tan và muối nào tạo kết tủa.</div>
+    </div>
+    <div class="tile tile-exp" data-target="exp3">
+      <div class="tile-icon">🫧</div><div class="tile-title">TN 3: Acid + Kim loại</div>
+      <div class="tile-desc">Thả viên Zn vào HCl, quan sát bọt khí H₂ thoát ra: Zn + 2HCl → ZnCl₂ + H₂↑.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 1. QUIZ ==================== -->
+<section id="screen-quiz" class="screen">
+  <div class="game-header">
+    <button class="btn btn-ghost btn-back-home">← Trang chủ</button>
+    <div class="game-title">Trắc nghiệm</div>
+    <div class="game-stats">
+      <span>Tiến độ: <strong id="quiz-progress">0/0</strong></span>
+      <span>Đúng: <strong id="quiz-score">0</strong></span>
+      <button class="btn btn-secondary" id="quiz-restart">Làm lại</button>
+    </div>
+  </div>
+  <div id="quiz-box" class="questions"></div>
+</section>
+
+<!-- ==================== 2. CLASSIFY ==================== -->
+<section id="screen-classify" class="screen">
+  <div class="game-header">
+    <button class="btn btn-ghost btn-back-home">← Trang chủ</button>
+    <div class="game-title">Phân loại Acid / Base / Oxide / Muối</div>
+    <div class="game-stats">
+      <span>Đúng: <strong id="classify-score">0/0</strong></span>
+      <button class="btn btn-secondary" id="classify-restart">Chơi lại</button>
+    </div>
+  </div>
+  <p class="hint-bar">💡 Trên máy tính: kéo–thả. Trên điện thoại: chạm chọn rồi chạm vào nhóm.</p>
+  <div id="classify-pool" class="drag-pool"></div>
+  <div id="classify-bins" class="drop-bins"></div>
+  <div id="classify-done" class="done-banner">🎉 Tuyệt vời! Bạn đã phân loại đúng tất cả các chất.</div>
+</section>
+
+<!-- ==================== 3. MATCH ==================== -->
+<section id="screen-match" class="screen">
+  <div class="game-header">
+    <button class="btn btn-ghost btn-back-home">← Trang chủ</button>
+    <div class="game-title">Ghép cặp trí nhớ</div>
+    <div class="game-stats">
+      <span>Lượt lật: <strong id="match-moves">0</strong></span>
+      <span>Thời gian: <strong id="match-time">00:00</strong></span>
+      <button class="btn btn-secondary" id="match-restart">Chơi lại</button>
+    </div>
+  </div>
+  <p class="hint-bar">💡 Lật 2 thẻ để xem; nếu công thức ↔ tên gọi khớp, thẻ ở lại.</p>
+  <div id="match-grid" class="memo-grid"></div>
+  <div id="match-done" class="done-banner"><span id="match-summary"></span></div>
+</section>
+
+<!-- ==================== 4. BALANCE ==================== -->
+<section id="screen-balance" class="screen">
+  <div class="game-header">
+    <button class="btn btn-ghost btn-back-home">← Trang chủ</button>
+    <div class="game-title">Cân bằng phương trình</div>
+    <div class="game-stats">
+      <span id="balance-progress">Câu 1/8</span>
+      <button class="btn btn-secondary" id="balance-restart">Chơi lại</button>
+    </div>
+  </div>
+  <p class="hint-bar">💡 Nhập hệ số (số nguyên dương) trước mỗi chất để hai bên có cùng số nguyên tử mỗi nguyên tố.</p>
+  <div id="balance-eq" class="equation-row"></div>
+  <div id="balance-note" class="balance-note"></div>
+  <div id="balance-feedback" class="feedback"></div>
+  <div class="balance-controls">
+    <button id="balance-check" class="btn btn-primary">Kiểm tra</button>
+    <button id="balance-next" class="btn btn-primary" style="display:none">Tiếp theo →</button>
+  </div>
+</section>
+
+<!-- ==================== 5. pH ==================== -->
+<section id="screen-ph" class="screen">
+  <div class="game-header">
+    <button class="btn btn-ghost btn-back-home">← Trang chủ</button>
+    <div class="game-title">Thang pH 1–14</div>
+    <div class="game-stats">
+      <span>Đúng: <strong id="ph-score">0/0</strong></span>
+      <button class="btn btn-secondary" id="ph-restart">Chơi lại</button>
+    </div>
+  </div>
+  <p class="hint-bar">💡 Đặt mỗi chất vào ô pH gần đúng nhất. Đỏ = acid, xanh lá = trung tính, xanh dương = base.</p>
+  <div id="ph-pool" class="drag-pool"></div>
+  <div id="ph-scale" class="ph-scale"></div>
+</section>
+
+<!-- ==================== EXP 1 ==================== -->
+<section id="screen-exp1" class="screen">
+  <div class="game-header">
+    <button class="btn btn-ghost btn-back-home">← Trang chủ</button>
+    <div class="game-title">TN 1: NaOH + Phenolphtalein + HCl</div>
+    <button class="btn btn-secondary" id="exp1-reset">Làm lại</button>
+  </div>
+  <div class="exp-layout">
+    <div id="exp1-stage" class="exp-stage">
+      <div id="exp1-tube" class="tube">
+        <div class="tube-top"></div>
+        <div class="tube-liquid"></div>
+        <div class="tube-bottom"></div>
+      </div>
+    </div>
+    <div class="exp-side">
+      <div class="ph-meter">
+        <div class="ph-meter-bar"></div>
+        <div id="exp1-ph-mark" class="ph-meter-mark"></div>
+        <div>pH: <strong id="exp1-ph-val">13</strong></div>
+      </div>
+      <div class="exp-actions">
+        <button id="exp1-add-ind" class="btn btn-primary">Thêm phenolphtalein</button>
+        <button id="exp1-add-hcl" class="btn btn-primary" disabled>Thêm 1 giọt HCl</button>
+      </div>
+      <div id="exp1-msg" class="exp-msg"></div>
+      <div class="exp-equation">NaOH + HCl → NaCl + H₂O</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== EXP 2 ==================== -->
+<section id="screen-exp2" class="screen">
+  <div class="game-header">
+    <button class="btn btn-ghost btn-back-home">← Trang chủ</button>
+    <div class="game-title">TN 2: Bảng tính tan</div>
+    <button class="btn btn-secondary" id="exp2-reset">Làm lại</button>
+  </div>
+  <div class="exp-layout">
+    <div class="exp-stage">
+      <div id="exp2-water" class="beaker"></div>
+    </div>
+    <div class="exp-side">
+      <div id="exp2-msg" class="exp-msg">Bấm vào một muối để thử thả vào nước.</div>
+      <div id="exp2-grid" class="salt-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== EXP 3 ==================== -->
+<section id="screen-exp3" class="screen">
+  <div class="game-header">
+    <button class="btn btn-ghost btn-back-home">← Trang chủ</button>
+    <div class="game-title">TN 3: Zn + HCl → ZnCl₂ + H₂↑</div>
+    <button class="btn btn-secondary" id="exp3-reset">Làm lại</button>
+  </div>
+  <div class="exp-layout">
+    <div class="exp-stage">
+      <div id="exp3-tube" class="tube">
+        <div class="tube-top"></div>
+        <div class="tube-liquid liquid-clear"></div>
+        <div id="exp3-bubbles" class="bubble-layer"></div>
+        <div class="zn-pellet"></div>
+        <div class="tube-bottom"></div>
+      </div>
+    </div>
+    <div class="exp-side">
+      <div class="exp-actions">
+        <button id="exp3-add-zn" class="btn btn-primary">Thả viên Zn</button>
+      </div>
+      <div id="exp3-msg" class="exp-msg"></div>
+      <div class="exp-equation">Zn + 2HCl → ZnCl₂ + H₂↑</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div id="term-tooltip" class="term-tooltip" role="tooltip" aria-hidden="true"></div>
+
+<footer class="footer">
+  <div class="footer-inner">Hóa học 8 · HK2 · Trò chơi học tập · Tham khảo, không thay thế đề thi chính thức.</div>
+</footer>
+
+<script src="glossary.js"></script>
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script src="games.js"></script>
+<script src="experiments.js"></script>
+</body>
+</html>
