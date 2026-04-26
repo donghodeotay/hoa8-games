@@ -167,3 +167,29 @@ window.EXPERIMENTS = (function(){
 
   return { exp1: AcidBase, exp2: Solubility, exp3: AcidMetal };
 })();
+
+
+/* ============= DEFENSIVE SELF-BIND =============
+ * This runs regardless of app.js. When the user clicks an experiment tile,
+ * we call start() ourselves (after a short delay to let the screen change).
+ * Idempotent: each experiment's init() guards itself, so duplicate calls
+ * are safe. This makes the site resilient even if app.js wasn't updated.
+ */
+(function(){
+  function bindTiles(){
+    var tiles = document.querySelectorAll('.tile[data-target^="exp"]');
+    Array.prototype.forEach.call(tiles, function(tile){
+      tile.addEventListener("click", function(){
+        var name = tile.getAttribute("data-target");
+        if (window.EXPERIMENTS && window.EXPERIMENTS[name] && window.EXPERIMENTS[name].start) {
+          setTimeout(function(){ window.EXPERIMENTS[name].start(); }, 60);
+        }
+      });
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindTiles);
+  } else {
+    bindTiles();
+  }
+})();
